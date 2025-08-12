@@ -1,12 +1,13 @@
 # Mercurion-Evaluation
 
+## Project Structure
 mercurion-evaluation/
 │
 ├── mercurion_evaluation/
-│   ├── __init__.py
-│   ├── Likert.py
-│   ├── Elo.py
-│   ├── llm_query.py
+│ ├── init.py
+│ ├── Likert.py
+│ ├── Elo.py
+│ ├── llm_query.py
 ├── requirements.txt
 ├── setup.py
 ├── README.md
