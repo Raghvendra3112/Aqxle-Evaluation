@@ -1,6 +1,6 @@
 # Mercurion-Evaluation
 
-Mercurion Evaluation is a private Python library containing standardized evaluation utilities for:
+Mercurion Evaluation is a Python library containing standardized evaluation utilities for:
 - **Likert scale scoring**
 - **Elo rating updates**
 - **Standardized LLM querying**
@@ -8,4 +8,4 @@ Mercurion Evaluation is a private Python library containing standardized evaluat
 ## 📦 Installation
 
 ```bash
-pip install git+https://github.com/Raghvendra3112/mercurion-evaluation.git
+pip install git+https://github.com/Raghvendra3112/Mercurion-Evaluation.git
