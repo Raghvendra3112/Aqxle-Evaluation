@@ -5,7 +5,7 @@ Mercurion Evaluation is a private Python library containing standardized evaluat
 - **Elo rating updates**
 - **Standardized LLM querying**
 
-mercurion-evaluation/
+mercurion-evaluation
 │
 ├── .gitignore          # Ignore unwanted files
 ├── README.md           # Project documentation
