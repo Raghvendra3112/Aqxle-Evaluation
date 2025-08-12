@@ -7,6 +7,5 @@ Mercurion Evaluation is a private Python library containing standardized evaluat
 
 ## 📦 Installation
 
-### SSH (recommended for private repos)
 ```bash
-pip install git+ssh://git@github.com/Raghvendra3112/Mercurion-Evaluation.git
+pip install git+https://github.com/Raghvendra3112/mercurion-evaluation.git
