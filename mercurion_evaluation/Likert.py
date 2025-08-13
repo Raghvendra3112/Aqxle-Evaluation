@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import anthropic
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+dotenv_path = os.path.join(repo_root, ".env")
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
