@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="mercurion-evaluation",
+    name="Aqxle_evaluation",
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -9,5 +9,5 @@ setup(
     ],
     description="Likert, Elo, and LLM utilities for internal evaluation",
     author="Raghvendra Misra",
-    url="https://github.com/Raghvendra3112/mercurion-evaluation",
+    url="https://github.com/Raghvendra3112/Aqxle-evaluation",
 )
