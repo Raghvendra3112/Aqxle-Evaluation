@@ -31,6 +31,7 @@ def evaluate(suggestion_data, system_prompt):
 
     message = client.messages.create(
         model="claude-opus-4-1-20250805",  # Opus 4.1
+        max_tokens=1000,
         system=system_prompt,
         messages=[{"role": "user", "content": json.dumps(suggestion_data)}],
         temperature=0.1
