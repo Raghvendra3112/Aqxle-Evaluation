@@ -1,1 +1,1 @@
-
+from .Likert import evaluate
