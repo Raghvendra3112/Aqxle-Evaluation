@@ -1,6 +1,6 @@
-# Mercurion-Evaluation
+# Aqxle-Evaluation
 
-Mercurion Evaluation is a Python library containing standardized evaluation utilities for:
+Aqxle Evaluation is a Python library containing standardized evaluation utilities for:
 - **Likert scale scoring**
 - **Elo rating updates**
 - **Standardized LLM querying**
@@ -17,5 +17,5 @@ Make sure you have:
 
 
 ```bash
-pip install git+https://github.com/Raghvendra3112/Mercurion-Evaluation.git
+pip install git+https://github.com/Raghvendra3112/Aqxle-Evaluation.git
 pip install -r requirements.txt
