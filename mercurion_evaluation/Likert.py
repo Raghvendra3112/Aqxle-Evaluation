@@ -3,8 +3,10 @@ import json
 from dotenv import load_dotenv
 import anthropic
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '.env'))
+repo_root = os.path.dirname(os.path.dirname(__file__))
 dotenv_path = os.path.join(repo_root, ".env")
+
+load_dotenv(dotenv_path)
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
