@@ -54,7 +54,14 @@ def extract_urls_and_claims(suggestion_data):
         model="claude-opus-4-1-20250805",
         max_tokens=800,
         system=system_prompt,
-        messages=[{"role": "user", "content": suggestion_data}],
+       messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": suggestion_data}
+                ]
+            }
+        ],
         temperature=0.1
     )
 
