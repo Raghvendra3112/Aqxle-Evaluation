@@ -68,10 +68,13 @@ def extract_urls_and_claims(suggestion_data):
         temperature=0.1
     )
 
+    raw_output = resp.content[0].text.strip()
     try:
-        return json.loads(resp.content[0].text)
-    except:
-        return []
+        return json.loads(raw_output)
+    except Exception as e:
+        print("⚠️ JSON parse failed:", e)
+        print("Raw model output:", raw_output)
+        return [{"url": "", "claim": ""}]
 
 def evaluate_url(extracted_items):
     """
