@@ -50,6 +50,9 @@ def extract_urls_and_claims(suggestion_data):
     2. All numerical/statistical claims (amounts, percentages, years, market sizes).
     Return as list of dicts: {{"url";"","claim";""},......}"""
 
+    if not isinstance(suggestion_data, str):
+        suggestion_data = json.dumps(suggestion_data, indent=2)
+    
     resp = client.messages.create(
         model="claude-opus-4-1-20250805",
         max_tokens=800,
