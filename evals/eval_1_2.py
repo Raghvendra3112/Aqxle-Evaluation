@@ -50,20 +50,17 @@ def parse_scores(llm_output: str):
     parsed_scores = {}
     weighted_scores = {}
 
-     # --- CLEANING STEP ---
-    # Strip markdown fences like ```json ... ```
     llm_output = llm_output.strip()
     if llm_output.startswith("```"):
         llm_output = re.sub(r"^```(?:json)?", "", llm_output, flags=re.IGNORECASE).strip()
         llm_output = re.sub(r"```$", "", llm_output).strip()
     
-    # Convert string to Python dict
     try:
         output_dict = json.loads(llm_output)
     except json.JSONDecodeError:
         raise ValueError("LLM output is not valid JSON")
 
-    # Extract raw 1-3 score for each dimension
+
     for dim, weight in dimensions.items():
         if dim in output_dict and "score" in output_dict[dim]:
             parsed_scores[dim] = int(output_dict[dim]["score"])
@@ -72,13 +69,11 @@ def parse_scores(llm_output: str):
             parsed_scores[dim] = None
             weighted_scores[dim] = 0.0
 
-    # Average of weighted scores
+
     avg_score = sum(weighted_scores.values()) / len(dimensions)
 
-    # Normalized percentage (relative to max possible = 0.6)
     normalized_pct = (avg_score / 0.6) * 100
 
-    # Build summary string
     summary_lines = []
     for dim, weight in dimensions.items():
         summary_lines.append(
