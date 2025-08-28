@@ -4,12 +4,11 @@ from dotenv import load_dotenv
 import requests
 from bs4 import BeautifulSoup
 
-# Anthropic
 import anthropic  
 
 from google import genai
 from google.genai import types
-from google.genai.types import GenerateContentConfig  # ✅ correct location
+from google.genai.types import GenerateContentConfig
 
 repo_root = os.path.dirname(os.path.dirname(__file__))
 dotenv_path = os.path.join(repo_root, ".env")
@@ -51,7 +50,7 @@ def evaluate(suggestion_data, system_prompt):
 
     return message.content[0].text
 
-def extract_urls_and_claims(suggestion_data):
+def url_extracter_1_3(suggestion_data):
     """
     Extract URLs and numeric/statistical claims from any message.
     Returns normalized dict.
@@ -110,145 +109,3 @@ def extract_urls_and_claims(suggestion_data):
         print("WARNING: Extraction failed:", str(e))
         return []
 
-def evaluate_url(extracted_items):
-    """
-    Takes a list of dicts like [{"url": "...", "claim": "..."}].
-    Use Claude with web_search tool to check validity of each claim.
-    Returns a list of dicts: [{"url": "...", "claim": "...", "result": "pass/fail", "reason": "..."}]
-    """
-    if not extracted_items:
-        print("No URLs or claims to evaluate")
-        return []
-        
-    results = []
-
-    for item in extracted_items:
-        url = item.get("url", "")
-        claim = item.get("claim", "")
-        
-        if not claim.strip():
-            results.append({
-                "url": url,
-                "claim": claim,
-                "result": "fail",
-                "reason": "Empty claim"
-            })
-            continue
-
-        query = f"""Please verify this claim using web search:
-
-                    Claim: {claim}
-                    Source URL: {url}
-
-                    Search for current information to verify if this claim is accurate. 
-                    Focus on recent data and reliable sources.
-
-                    Respond with ONLY a JSON object in this exact format:
-                    {{"claim":{claim}, "url": {url}, "result": "pass", "reason": "explanation"}}
-                    OR
-                    {{"claim":{claim}, "url": {url}, "result": "fail", "reason": "explanation"}}
-
-                    Where:
-                    - result is "pass" if the claim is accurate/supported, "fail" if inaccurate/unsupported
-                    - reason briefly explains why"""
-
-        try:
-            response = client.messages.create(
-                model="claude-sonnet-4-20250514",
-                max_tokens=1000,
-                messages=[{"role": "user", "content": query}],
-                tools=[{
-                    "name": "web_search",
-                    "description": "Search the web",
-                    "input_schema": {
-                        "type": "object",
-                        "properties": {
-                            "query": {"type": "string"}
-                        },
-                        "required": ["query"]
-                    }
-                }],
-                temperature=0.1
-            )
-
-            raw_response = ""
-            
-            for content_block in response.content:
-                if hasattr(content_block, 'text'):
-                    raw_response += content_block.text
-                elif hasattr(content_block, 'type') and content_block.type == 'text':
-                    raw_response += content_block.text
-            
-            raw_response = raw_response.strip()
-            
-            if not raw_response:
-                results.append({
-                    "url": url,
-                    "claim": claim,
-                    "result": "fail",
-                    "reason": "No text response received"
-                })
-                continue
-            
-            try:
-                if raw_response.startswith('{') and raw_response.endswith('}'):
-                    parsed = json.loads(raw_response)
-                elif '{' in raw_response and '}' in raw_response:
-                    start = raw_response.find('{')
-                    end = raw_response.rfind('}') + 1
-                    json_part = raw_response[start:end]
-                    parsed = json.loads(json_part)
-                else:
-                    parsed = {"result": "fail", "reason": f"Could not parse response: {raw_response[:100]}..."}
-                    
-                results.append({
-                    "url": url,
-                    "claim": claim,
-                    "result": parsed.get("result", "fail"),
-                    "reason": parsed.get("reason", "No reason provided")
-                })
-                
-            except json.JSONDecodeError as e:
-                results.append({
-                    "url": url,
-                    "claim": claim,
-                    "result": "fail",
-                    "reason": f"Failed to parse JSON: {str(e)}"
-                })
-                
-        except Exception as e:
-            print(f"WARNING: Failed to evaluate claim: {str(e)}")
-            results.append({
-                "url": url,
-                "claim": claim,
-                "result": "fail",
-                "reason": f"Evaluation error: {str(e)}"
-            })
-
-    return results
-
-
-def verify_claim(url, claim):
-    tools = [{"url_context": {}}]
-
-    prompt = f"""
-    You are a fact-checking assistant.
-    Claim: {claim}
-    Check the page at {url} and determine whether the claim is supported.
-    Output ONLY valid JSON with keys:
-    - "result": "Pass" if clearly supported, otherwise "Fail"
-    - "reasoning": short explanation
-"""
-
-    response = client.models.generate_content(
-        model=model_id,
-        contents=prompt,
-        config=GenerateContentConfig(tools=tools),
-    )
-
-    text_response = response.candidates[0].content.parts[0].text
-
-    try:
-        return json.loads(text_response)
-    except:
-        return {"result": "Fail", "reasoning": text_response.strip()}
