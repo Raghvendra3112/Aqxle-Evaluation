@@ -1,3 +1,107 @@
+instruction_prompt_1_1_news = """
+
+You are an intelligent market analyst for a BRAND.
+You will be given:
+
+1. A Trend based on news findings about market and/or product developments about the brand or its competitors
+2. A news-based insight derived from the trend
+3. Urls of sources that the generator llm cited for the trend
+
+
+
+"""
+instruction_prompt_1_1_reddit = """
+You are an intelligent marketing analyst.
+You will be given 2 inputs:
+1. A insight for the brand that is based on trending conversations related to : Client, Category, Products, Competition(additional context given below)
+with the goal of identifying signals that indicate shifts in consumer preference or purchase behaviour
+2. overall sentiment of the conversations  
+
+Your task is to evaluate the **insight** based on the below given guidelines, scoring system and brand context: 
+
+Guidelines:
+Strategic (20%): The insight should be tied to client priorities or objectives including driving sales, improving customer perception of the brand, or stealing market share from competitors.
+Nonobvious (20%): The insight should not be something that is obvious to the brand. 
+Specificity (20%): the insights should be specific, providing granular details around the brand/products/features, customer or competitor behaviors, and should try to explain the why behind specific trends.When mentioning/referencing a product, there should be a specific feature attributed in the insight. For Eg : when talking about Dell’s Alienware, people are talking about its display quality. 
+Impactful (20%): the insight should drive a measurable shift in client priorities.
+Clarity(20%) - Messaging should be not ambiguous, the message should be clear in what is it conveying and their should be no ambiguity in its message
+
+Your task is to evaluate the given content on the above mentioned guidelines and usefulness to the brand and score it based on the following:
+Dimension scoring
+1 - Does not meet guideline, omit
+2 - Somewhat meets guideline, could be stronger
+3 - Strongly meets guideline, acceptable
+
+Output format (strict JSON):
+{
+  "Strategic": {"score": <1-3>, "reasoning": "..."},
+  "Nonobvious": {"score": <1-3>, "reasoning": "..."},
+  "Specificity": {"score": <1-3>, "reasoning": "..."},
+  "Impactful": {"score": <1-3>, "reasoning": "..."},
+  "Clarity": {"score": <1-3>, "reasoning": "..."}
+}
+Additional context about the brand is given at the end of the prompt.
+Always give detailed reasoning for your score with respect to the brand's goals and the given guidelines. 
+
+Example:
+
+Commenters overwhelmingly oppose throwing away the ThinkPads, with many suggesting to snatch valuable parts like trackpoint 'nipples' before disposal. Several users express interest in acquiring specific models (e.g., T480) or buying them, even humorously offering '60% ownership of my firstborn.' Others recommend donating the laptops, especially after a fresh OS install, as they are still useful for basic tasks and better than cheap alternatives. Some suggest recycling at PC shops or selling in bulk on eBay after removing drives for security. IT professionals note that while these machines may be outdated for business, models like the T480 and P51 are still viable for personal use, and keeping a few for repairs or legacy support is wise. Overall, the consensus is to avoid waste and give the laptops a second life.
+
+Strategic: D - This insight doesn’t seem to tie to the client's primary marketing objectives
+
+Valuable: C - This may not be something that Lenovo marketing is away of, but its not strong enough to be valuable in its current state. We need to somehow tie this to a marketing objective. One way that we can possibly do so is by connecting a marketing strategy to the general insight that consumers agree to "avoid waste and give the laptops a second life." For example, this insight could indicate an environmentally conscious consumer mindset, which could be a new consumer for them to target using eco-friendly keywords and messaging"
+
+Clear: D - It is not clear how this insight can provide value to Lenovo. If we revised, per the previous comment, the clarity of this insight could improve.
+
+Impactful: D - If we make the above adjustments, this insight could be impactful, but only if we confirm that Lenovo is not already targeting an eco-friendly consumer with messaging related to this insight. To finalize the "Impactful" score, we need to confirm what Lenovo is doing.
+Overall score: D - Re-run insight with the goal of strengthening it based on the above recommendations
+
+exact scoring parameters and guidelines in the example may differ, but it will provide a example of the thinking process.
+"""
+
+instruction_prompt_1_2 = """
+You are an intelligent marketing analyst.
+You will be given two inputs:
+1. The Keyword category that news and suggetsion are for
+2. A piece of actionable news related to the industry, competitors, or market context.  
+3. A suggestion for the brand that highlights a keyword targeting opportunity.(Keywords that customer is targeting ,Keywords that the customer is not, but their competitors are (Missing Keywords), Missing Keyword analysis for Search Team)
+  
+
+Your task is to evaluate the **suggestion only** (not the news itself) based on the below given guidelines, scoring system and brand context: 
+
+Guidelines:
+Strategic (20%): The insight should be tied to client priorities or objectives including driving sales, improving customer perception of the brand, or stealing market share from competitors.
+Nonobvious (15%): The insight should not be something that is obvious to the brand. For Eg : Lenovo will definitely be going for a key promotional period with certain deals and discounts. So reiterating that is not beneficial.
+Specificity (15%): the insights should be specific, providing granular details around the brand/products/features, customer or competitor behaviors, and should try to explain the why behind specific trends.When mentioning/referencing a product, there should be a specific feature attributed in the insight. For Eg : when talking about Dell’s Alienware, people are talking about its display quality. 
+Actionable (30%) : The marketer should be able to take the insight and use that to make an optimisation that drives an outcome. 
+Impactful (20%): the insight should drive a measurable shift in client priorities.
+
+
+Your task is to evaluate the given content on the above mentioned guidelines and usefulness to the brand and score it based on the following:
+Dimension scoring
+1 - Does not meet guideline, omit
+2 - Somewhat meets guideline, could be stronger
+3 - Strongly meets guideline, acceptable
+
+Output format (strict JSON):
+{
+  "Strategic": {"score": <1-3>, "reasoning": "..."},
+  "Nonobvious": {"score": <1-3>, "reasoning": "..."},
+  "Specificity": {"score": <1-3>, "reasoning": "..."},
+  "Actionable": {"score": <1-3>, "reasoning": "..."},
+  "Impactful": {"score": <1-3>, "reasoning": "..."}
+}
+Additional context about the brand is given at the end of the prompt.
+Always give detailed reasoning for your score with respect to the brand's goals and the given guidelines. 
+
+Here is an example of an extremely good insight:
+Dell is running a significant 'Black Friday in July' sales event, offering discounts on both laptops and gaming monitors. Notably, the Alienware 27-inch QD-OLED 4K Gaming Monitor is on sale for $599, which is $300 off its regular price - close to 35%  off. Targeting keywords such as 'gaming monitor', '4K gaming monitor' used by competitors but not Lenovo—can help Lenovo capture demand from price-sensitive and performance-focused gamers, especially during major sales events. Messaging should emphasize Lenovo Legion's advanced features, competitive pricing, and availability during promotional periods to stay top-of-mind in this highly competitive segment.
+    
+
+Here is an example of a poor insight:
+There is significant news activity and heavy paid search promotion by competitors around desktops and laptops, especially during major sales events like Amazon Prime Day and Black Friday in July. Competitors are featured in top deal roundups and are actively launching and branding new products, including AI-powered PCs. Lenovo is mentioned in reviews but is not as prominent in paid search or promotional activity. To remain competitive and capture demand during these high-traffic periods, Lenovo should strongly consider including this keyword category in its paid search strategy. This can help capture demand from customers searching for deals during these sales periods.
+
+"""
 instruction_prompt_1_3 = """
 Role and Context
 
@@ -179,96 +283,4 @@ Verify all claims against provided source material
 BRAND CONTEXT GIVEN BELOW
 give o/p in strict json format
 Remember: Your role is to ensure the analysis provides genuine strategic value to brands marketing efforts while maintaining high standards for accuracy and specificity
-"""
-
-instruction_prompt_1_1_reddit = """
-You are an intelligent marketing analyst.
-You will be given 2 inputs:
-1. A insight for the brand that is based on trending conversations related to : Client, Category, Products, Competition(additional context given below)
-with the goal of identifying signals that indicate shifts in consumer preference or purchase behaviour
-2. overall sentiment of the conversations  
-
-Your task is to evaluate the **insight** based on the below given guidelines, scoring system and brand context: 
-
-Guidelines:
-Strategic (20%): The insight should be tied to client priorities or objectives including driving sales, improving customer perception of the brand, or stealing market share from competitors.
-Nonobvious (20%): The insight should not be something that is obvious to the brand. 
-Specificity (20%): the insights should be specific, providing granular details around the brand/products/features, customer or competitor behaviors, and should try to explain the why behind specific trends.When mentioning/referencing a product, there should be a specific feature attributed in the insight. For Eg : when talking about Dell’s Alienware, people are talking about its display quality. 
-Impactful (20%): the insight should drive a measurable shift in client priorities.
-Clarity(20%) - Messaging should be not ambiguous, the message should be clear in what is it conveying and their should be no ambiguity in its message
-
-Your task is to evaluate the given content on the above mentioned guidelines and usefulness to the brand and score it based on the following:
-Dimension scoring
-1 - Does not meet guideline, omit
-2 - Somewhat meets guideline, could be stronger
-3 - Strongly meets guideline, acceptable
-
-Output format (strict JSON):
-{
-  "Strategic": {"score": <1-3>, "reasoning": "..."},
-  "Nonobvious": {"score": <1-3>, "reasoning": "..."},
-  "Specificity": {"score": <1-3>, "reasoning": "..."},
-  "Impactful": {"score": <1-3>, "reasoning": "..."},
-  "Clarity": {"score": <1-3>, "reasoning": "..."}
-}
-Additional context about the brand is given at the end of the prompt.
-Always give detailed reasoning for your score with respect to the brand's goals and the given guidelines. 
-
-Example:
-
-Commenters overwhelmingly oppose throwing away the ThinkPads, with many suggesting to snatch valuable parts like trackpoint 'nipples' before disposal. Several users express interest in acquiring specific models (e.g., T480) or buying them, even humorously offering '60% ownership of my firstborn.' Others recommend donating the laptops, especially after a fresh OS install, as they are still useful for basic tasks and better than cheap alternatives. Some suggest recycling at PC shops or selling in bulk on eBay after removing drives for security. IT professionals note that while these machines may be outdated for business, models like the T480 and P51 are still viable for personal use, and keeping a few for repairs or legacy support is wise. Overall, the consensus is to avoid waste and give the laptops a second life.
-
-Strategic: D - This insight doesn’t seem to tie to the client's primary marketing objectives
-
-Valuable: C - This may not be something that Lenovo marketing is away of, but its not strong enough to be valuable in its current state. We need to somehow tie this to a marketing objective. One way that we can possibly do so is by connecting a marketing strategy to the general insight that consumers agree to "avoid waste and give the laptops a second life." For example, this insight could indicate an environmentally conscious consumer mindset, which could be a new consumer for them to target using eco-friendly keywords and messaging"
-
-Clear: D - It is not clear how this insight can provide value to Lenovo. If we revised, per the previous comment, the clarity of this insight could improve.
-
-Impactful: D - If we make the above adjustments, this insight could be impactful, but only if we confirm that Lenovo is not already targeting an eco-friendly consumer with messaging related to this insight. To finalize the "Impactful" score, we need to confirm what Lenovo is doing.
-Overall score: D - Re-run insight with the goal of strengthening it based on the above recommendations
-
-exact scoring parameters and guidelines in the example may differ, but it will provide a example of the thinking process.
-"""
-
-instruction_prompt_1_2 = """
-You are an intelligent marketing analyst.
-You will be given two inputs:
-1. A piece of actionable news related to the industry, competitors, or market context.  
-2. A suggestion for the brand that highlights a keyword targeting opportunity.(Keywords that customer is targeting ,Keywords that the customer is not, but their competitors are (Missing Keywords), Missing Keyword analysis for Search Team)
-  
-
-Your task is to evaluate the **suggestion only** (not the news itself) based on the below given guidelines, scoring system and brand context: 
-
-Guidelines:
-Strategic (20%): The insight should be tied to client priorities or objectives including driving sales, improving customer perception of the brand, or stealing market share from competitors.
-Nonobvious (15%): The insight should not be something that is obvious to the brand. For Eg : Lenovo will definitely be going for a key promotional period with certain deals and discounts. So reiterating that is not beneficial.
-Specificity (15%): the insights should be specific, providing granular details around the brand/products/features, customer or competitor behaviors, and should try to explain the why behind specific trends.When mentioning/referencing a product, there should be a specific feature attributed in the insight. For Eg : when talking about Dell’s Alienware, people are talking about its display quality. 
-Actionable (30%) : The marketer should be able to take the insight and use that to make an optimisation that drives an outcome. 
-Impactful (20%): the insight should drive a measurable shift in client priorities.
-
-
-Your task is to evaluate the given content on the above mentioned guidelines and usefulness to the brand and score it based on the following:
-Dimension scoring
-1 - Does not meet guideline, omit
-2 - Somewhat meets guideline, could be stronger
-3 - Strongly meets guideline, acceptable
-
-Output format (strict JSON):
-{
-  "Strategic": {"score": <1-3>, "reasoning": "..."},
-  "Nonobvious": {"score": <1-3>, "reasoning": "..."},
-  "Specificity": {"score": <1-3>, "reasoning": "..."},
-  "Actionable": {"score": <1-3>, "reasoning": "..."},
-  "Impactful": {"score": <1-3>, "reasoning": "..."}
-}
-Additional context about the brand is given at the end of the prompt.
-Always give detailed reasoning for your score with respect to the brand's goals and the given guidelines. 
-
-Here is an example of an extremely good insight:
-Dell is running a significant 'Black Friday in July' sales event, offering discounts on both laptops and gaming monitors. Notably, the Alienware 27-inch QD-OLED 4K Gaming Monitor is on sale for $599, which is $300 off its regular price - close to 35%  off. Targeting keywords such as 'gaming monitor', '4K gaming monitor' used by competitors but not Lenovo—can help Lenovo capture demand from price-sensitive and performance-focused gamers, especially during major sales events. Messaging should emphasize Lenovo Legion's advanced features, competitive pricing, and availability during promotional periods to stay top-of-mind in this highly competitive segment.
-    
-
-Here is an example of a poor insight:
-There is significant news activity and heavy paid search promotion by competitors around desktops and laptops, especially during major sales events like Amazon Prime Day and Black Friday in July. Competitors are featured in top deal roundups and are actively launching and branding new products, including AI-powered PCs. Lenovo is mentioned in reviews but is not as prominent in paid search or promotional activity. To remain competitive and capture demand during these high-traffic periods, Lenovo should strongly consider including this keyword category in its paid search strategy. This can help capture demand from customers searching for deals during these sales periods.
-
 """

@@ -11,27 +11,49 @@ import sys
 import os
 import pandas as pd
 import re
+from typing import List, Dict, Any
 
 from prompts.prompts import instruction_prompt_1_2
 from modules.eval_functions import evaluate
 from modules.get_company_context import get_company_context
 
 
-def load_suggestion_data(file_path: str):
+def load_suggestion_data(file_path: str) -> List[Dict[str, any]]:
     """
-    Load CSV with two columns: Actionable News, Insight
-    Returns a list of dicts: [{"Actionable News": ..., "Insight": ...}, ...]
+    Load JSON file containing keyword category, actionable news, and insights.
+    Extracts only:
+      - Keyword Category
+      - Actionable News
+      - Insight
+    Returns a list of dicts:
+    [
+      {
+        "Keyword Category": ...,
+        "Actionable News": [...],
+        "Insight": [...]
+      },
+      ...
+    ]
     """
-    df = pd.read_csv(file_path)
+    with open(file_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
 
-    #Check required columns
-    expected_cols = {"Actionable News", "Insight"}
-    if not expected_cols.issubset(df.columns):
-        raise ValueError(f"CSV must contain columns: {expected_cols}")
+    # Handle case where JSON is a single dict instead of a list of dicts
+    if isinstance(data, dict):
+        data = [data]
 
-    # Convert rows into list of dicts
-    return df.to_dict(orient="records")
+    extracted = []
+    for entry in data:
+        if not all(k in entry for k in ("Keyword Category", "Actionable News", "Insight")):
+            raise ValueError("Each entry must contain 'Keyword Category', 'Actionable News', and 'Insight'")
 
+        extracted.append({
+            "Keyword Category": entry["Keyword Category"],
+            "Actionable News": entry["Actionable News"],
+            "Insight": entry["Insight"],
+        })
+
+    return extracted
 
 
 def parse_scores(llm_output: str):

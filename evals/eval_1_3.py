@@ -41,7 +41,7 @@ import pandas as pd
 import re
 
 from prompts.prompts import instruction_prompt_1_3
-from modules.eval_functions import evaluate, verify_claim, extract_urls_and_claims
+from modules.eval_functions import evaluate
 from modules.get_company_context import get_company_context
 
 
@@ -133,7 +133,7 @@ def pipeline(input, output, brand):
             
         results.append({
             "trend": datapoint["trend"],
-            "score": datapoint["score"],
+            "industry_score": datapoint["industry_score"],
             "analysis": json.dumps(datapoint.get("analysis", {}), indent=2, ensure_ascii=False),
             "score_summary": score_summary,
             #"citation_score": json.dumps(url_score, indent=2, ensure_ascii=False),
