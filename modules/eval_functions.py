@@ -5,10 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 
 import anthropic  
-
-from google import genai
-from google.genai import types
-from google.genai.types import GenerateContentConfig
+from langfuse import get_client,observe
 
 repo_root = os.path.dirname(os.path.dirname(__file__))
 dotenv_path = os.path.join(repo_root, ".env")
@@ -16,16 +13,13 @@ dotenv_path = os.path.join(repo_root, ".env")
 load_dotenv(dotenv_path)
 
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-
-client = genai.Client(api_key=GEMINI_API_KEY)
-model_id = "gemini-2.5-flash"
 
 if not ANTHROPIC_API_KEY:
     raise ValueError("ANTHROPIC_API_KEY not found in .env file. Please set it before using the library.")
 
 client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
+@observe(name="Claude LLM Call")
 def evaluate(suggestion_data, system_prompt):
     """
     Evaluate suggestions using Anthropic's Claude model.
@@ -50,6 +44,7 @@ def evaluate(suggestion_data, system_prompt):
 
     return message.content[0].text
 
+@observe(name="Claude LLM Call for url extraction")
 def url_extracter_1_3(suggestion_data):
     """
     Extract URLs and numeric/statistical claims from any message.

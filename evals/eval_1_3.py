@@ -39,12 +39,12 @@ import sys
 import os
 import pandas as pd
 import re
-
+from langfuse import get_client,observe
 from prompts.prompts import instruction_prompt_1_3
 from modules.eval_functions import evaluate
 from modules.get_company_context import get_company_context
 
-
+@observe(name="Load data")
 def load_suggestion_data(file_path: str):
     
     """Load Ad copy analysis json and return list of top_k_trends as dicts."""
@@ -54,7 +54,7 @@ def load_suggestion_data(file_path: str):
     return data.get("top_k_trends", [])
 
 
-
+@observe(name="Score extraction")
 def parse_scores(llm_output: str):
     """
     Parse dimension scores (1-3 scale) and compute weighted + normalized scores.
@@ -111,7 +111,7 @@ def parse_scores(llm_output: str):
 
     return "\n".join(summary_lines)
 
-
+@observe(name="Pipeline function")
 def pipeline(input, output, brand):
     input_path = input
     output_path =  output
