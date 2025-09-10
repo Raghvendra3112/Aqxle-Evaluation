@@ -45,8 +45,8 @@ def main():
             sys.exit(1)
     
 
-    input_path = "C:/ZZZZ-MINE/Aqxle/Inputs/output/2025-09-09/Lenovo_ad_analysis_data.json"
-    output_path = "C:/ZZZZ-MINE/Aqxle/evals/1.3_Lenovo_Evaluations_0909.csv"
+    input_path = "C:/ZZZZ-MINE/Aqxle/Inputs/output/2025-09-05/Lenovo_ad_analysis_data.json"
+    output_path = "C:/ZZZZ-MINE/Aqxle/evals/1.3_Lenovo_Evaluations_0509.csv"
     brand = "Lenovo"
     
     print(f"\n Session Configuration:")

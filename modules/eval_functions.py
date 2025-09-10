@@ -11,7 +11,7 @@ repo_root = os.path.dirname(os.path.dirname(__file__))
 dotenv_path = os.path.join(repo_root, ".env")
 
 load_dotenv(dotenv_path)
-
+langfuse = get_client()
 ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 if not ANTHROPIC_API_KEY:
@@ -40,6 +40,42 @@ def evaluate(suggestion_data, system_prompt):
         system=system_prompt,
         messages=[{"role": "user", "content": json.dumps(suggestion_data)}],
         temperature=0.1
+    )
+    # Extract usage safely
+    usage = getattr(message, "usage", {})
+    input_tokens = getattr(usage, "input_tokens", 0)
+    output_tokens = getattr(usage, "output_tokens", 0)
+    cache_write_tokens = getattr(usage, "cache_write_input_tokens", 0)
+    cache_read_tokens = getattr(usage, "cache_read_input_tokens", 0)
+
+    # ---- Pricing (Anthropic Claude Opus 4.1 as of Sep 2025) ----
+    # Input: $15 / MTok
+    # Output: $75 / MTok
+    # Prompt caching: Write $18.75 / MTok, Read $1.50 / MTok
+    input_cost = (input_tokens / 1_000_000) * 15
+    output_cost = (output_tokens / 1_000_000) * 75
+    cache_write_cost = (cache_write_tokens / 1_000_000) * 18.75
+    cache_read_cost = (cache_read_tokens / 1_000_000) * 1.5
+    total_cost = input_cost + output_cost + cache_write_cost + cache_read_cost
+
+    # ---- Log to Langfuse ----
+    langfuse.update_current_generation(
+        input={"system_prompt": system_prompt, "user_input": suggestion_data},
+        model="claude-opus-4-1-20250805",
+        usage_details={
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "cache_write_tokens": cache_write_tokens,
+            "cache_read_tokens": cache_read_tokens,
+            "total_tokens": input_tokens + output_tokens + cache_write_tokens + cache_read_tokens,
+        },
+        cost_details={
+            "input": input_cost,
+            "output": output_cost,
+            "cache_write": cache_write_cost,
+            "cache_read": cache_read_cost,
+            "total": total_cost,
+        }
     )
 
     return message.content[0].text

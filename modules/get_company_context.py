@@ -1,7 +1,7 @@
 import os
 from openai import OpenAI
 from langfuse import get_client,observe
-
+langfuse = get_client()
 @observe(as_type="generation", name="Get Brand Context")
 def get_company_context(company_name: str) -> str:
     """
@@ -68,15 +68,44 @@ def get_company_context(company_name: str) -> str:
     Do not invent unrelated industries or random details.
     """
     
+    # ---- Call OpenAI ----
     response = client.chat.completions.create(
-        model="gpt-4.1-2025-04-14",  # swap if you prefer another GPT model
+        model="gpt-4.1-2025-04-14",
         messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": company_name}
         ],
         temperature=0.2,
     )
-    
+
+    # ---- Extract usage safely ----
+    usage = getattr(response, "usage", {})
+    input_tokens = getattr(usage, "prompt_tokens", 0)
+    output_tokens = getattr(usage, "completion_tokens", 0)
+    total_tokens = getattr(usage, "total_tokens", input_tokens + output_tokens)
+
+    # ---- Pricing for GPT-4.1 (128k) ----
+    input_cost = (input_tokens / 1_000_000) * 5
+    output_cost = (output_tokens / 1_000_000) * 15
+    total_cost = input_cost + output_cost
+
+    # ---- Log to Langfuse ----
+    langfuse.update_current_generation(
+        input={"system_prompt": system_prompt, "company_name": company_name},
+        output=response.choices[0].message.content,
+        model="gpt-4.1-2025-04-14",
+        usage_details={
+            "input_tokens": input_tokens,
+            "output_tokens": output_tokens,
+            "total_tokens": total_tokens,
+        },
+        cost_details={
+            "input": input_cost,
+            "output": output_cost,
+            "total": total_cost,
+        }
+    )
+
     return response.choices[0].message.content.strip()
 
 
