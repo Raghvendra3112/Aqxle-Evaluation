@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 from langfuse import get_client,observe
 
-@observe(name="Get Brand Context")
+@observe(as_type="generation", name="Get Brand Context")
 def get_company_context(company_name: str) -> str:
     """
     Fetches essential business and marketing context for a given company.

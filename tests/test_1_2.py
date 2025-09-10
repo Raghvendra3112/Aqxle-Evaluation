@@ -14,8 +14,7 @@ import re
 from typing import List, Dict, Any
 
 from prompts.prompts import instruction_prompt_1_2
-from modules.eval_functions import evaluate
-from modules.get_company_context import get_company_context
+from tests.functions import evaluate, get_company_context
 
 
 def load_suggestion_data(file_path: str) -> List[Dict[str, any]]:

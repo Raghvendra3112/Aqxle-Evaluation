@@ -86,7 +86,7 @@ Dimension scoring
 Output format (strict JSON):
 {
   "Strategic": {"score": <1-3>, "reasoning": "..."},
-  "Nonobvious": {"score": <1-3>, "reasoning": "..."},
+  "Non_obvious": {"score": <1-3>, "reasoning": "..."},
   "Specificity": {"score": <1-3>, "reasoning": "..."},
   "Actionable": {"score": <1-3>, "reasoning": "..."},
   "Impactful": {"score": <1-3>, "reasoning": "..."}
