@@ -1,0 +1,25 @@
+I need to see the actual LLM output analysis to evaluate it. The input you've provided shows an empty analysis object `{"trend": "sample trend", "analysis": {}}`. 
+
+Please provide the complete ad copy analysis output from the generator LLM that includes:
+- The specific market trend being analyzed
+- The executive summary
+- Key findings
+- Strategic recommendations
+- Any other analysis components
+
+Once you share the actual analysis content, I'll evaluate it across all six dimensions (Specificity, Strategic, Impactful, Non-obvious, Actionability, and Clarity) and provide the detailed JSON assessment as requested.
+
+For example, the analysis should look something like:
+```json
+{
+  "trend": "AI-powered productivity tools",
+  "analysis": {
+    "executive_summary": "...",
+    "findings": [...],
+    "recommendations": [...],
+    // other analysis components
+  }
+}
+```
+
+Please share the complete analysis output so I can provide a thorough evaluation.
