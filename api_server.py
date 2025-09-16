@@ -41,7 +41,7 @@ class EvalRequest(BaseModel):
 async def health():
     return {"status": "ok", "time": datetime.utcnow().isoformat()}
 
-@app.post("/run-eval")
+@app.post("/run-ad-copy-eval")
 async def run_eval(req: EvalRequest, background_tasks: BackgroundTasks, x_api_key: str = Header(None)):
     # Basic API key auth
     if API_KEY == "change-me":
