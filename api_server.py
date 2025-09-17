@@ -73,7 +73,7 @@ async def run_ad_copy_eval(req: AdCopyEvalRequest, background_tasks: BackgroundT
     logger.info("Received Ad Copy job %s: brand=%s date=%s input=%s", job_id, req.brand, req.date, input_path)
     background_tasks.add_task(_run_pipeline_background, pipeline_1_3, input_path, output_path, req.brand, job_id)
 
-    return {"status": "accepted", "job_id": job_id, "input_file": input_path, "output_file": output_path}
+    return {"status": "accepted", "job_id": job_id}
 
 
 @app.post("/run-keyword-eval")
@@ -96,7 +96,7 @@ async def run_keyword_eval(req: KeywordEvalRequest, background_tasks: Background
     logger.info("Received Keyword job %s: brand=%s date=%s input=%s", job_id, req.brand, req.date, input_path)
     background_tasks.add_task(_run_pipeline_background, pipeline_1_2, input_path, output_path, req.brand, job_id)
 
-    return {"status": "accepted", "job_id": job_id, "input_file": input_path, "output_file": output_path}
+    return {"status": "accepted", "job_id": job_id}
 
 
 # ---------- Background runner ----------

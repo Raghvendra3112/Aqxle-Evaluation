@@ -476,17 +476,46 @@ def pipeline(input_path: str, output_path: str, brand: str):
         user_id="raghvendra",
     )
 
-    # Branded
-    branded = data.get("search_volume_analysis", {}).get("top_branded", {})
-    if branded:
-        results.append(evaluate_branded_summary(branded, full_prompt, brand, trace_id))
+    search_volume_analysis = data.get("search_volume_analysis", {})
+    is_segmented = search_volume_analysis.get("is_segmented", False)
 
-    # Non-branded
-    nonbranded = data.get("search_volume_analysis", {}).get("top_non_branded", {})
-    if nonbranded:
-        results.append(evaluate_nonbranded_summary(nonbranded, full_prompt, brand, trace_id))
+    if is_segmented:
+        segmented = search_volume_analysis.get("segmented_analysis", {})
+        for segment_name, segment_data in segmented.items():
+            # Branded inside segment
+            branded = segment_data.get("top_branded", {})
+            if branded:
+                results.append(
+                    evaluate_branded_summary(
+                        branded, 
+                        full_prompt, 
+                        f"{brand} - {segment_name}"
+                    )
+                )
 
+            # Non-branded inside segment
+            nonbranded = segment_data.get("top_non_branded", {})
+            if nonbranded:
+                results.append(
+                    evaluate_nonbranded_summary(
+                        nonbranded, 
+                        full_prompt, 
+                        f"{brand} - {segment_name}"
+                    )
+                )
+
+    else:
+        # Existing normal mode
+        branded = search_volume_analysis.get("top_branded", {})
+        if branded:
+            results.append(evaluate_branded_summary(branded, full_prompt, brand))
+
+        nonbranded = search_volume_analysis.get("top_non_branded", {})
+        if nonbranded:
+            results.append(evaluate_nonbranded_summary(nonbranded, full_prompt, brand))
     # Trend Analysis
+    
+    
     trends = data.get("trend_analysis", [])
     for idx, trend in enumerate(trends, 1):
         results.append(evaluate_single_trend(trend, full_prompt, idx, len(trends), brand, trace_id))
