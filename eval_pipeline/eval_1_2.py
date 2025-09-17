@@ -334,7 +334,7 @@ def evaluate_single_trend(datapoint: Dict[str, Any], full_instruction_prompt: st
     trend_text = datapoint.get("trend", "N/A")
 
     langfuse.update_current_trace(
-       name=f"{brand} Ad Copy Pipeline - {datetime.now().strftime('%Y-%m-%d')}",
+       name=f"{brand} Keyword Pipeline - {datetime.now().strftime('%Y-%m-%d')}",
         metadata={
             "brand": brand,
             "trend_index": trend_index,
