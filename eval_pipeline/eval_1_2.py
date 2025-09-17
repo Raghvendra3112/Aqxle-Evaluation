@@ -489,7 +489,8 @@ def pipeline(input_path: str, output_path: str, brand: str):
                     evaluate_branded_summary(
                         branded, 
                         full_prompt, 
-                        f"{brand} - {segment_name}"
+                        f"{brand} - {segment_name}",
+                        trace_id
                     )
                 )
 
@@ -500,7 +501,8 @@ def pipeline(input_path: str, output_path: str, brand: str):
                     evaluate_nonbranded_summary(
                         nonbranded, 
                         full_prompt, 
-                        f"{brand} - {segment_name}"
+                        f"{brand} - {segment_name}",
+                        trace_id
                     )
                 )
 
@@ -508,11 +510,11 @@ def pipeline(input_path: str, output_path: str, brand: str):
         # Existing normal mode
         branded = search_volume_analysis.get("top_branded", {})
         if branded:
-            results.append(evaluate_branded_summary(branded, full_prompt, brand))
+            results.append(evaluate_branded_summary(branded, full_prompt, brand,trace_id))
 
         nonbranded = search_volume_analysis.get("top_non_branded", {})
         if nonbranded:
-            results.append(evaluate_nonbranded_summary(nonbranded, full_prompt, brand))
+            results.append(evaluate_nonbranded_summary(nonbranded, full_prompt, brand,trace_id))
     # Trend Analysis
     
     
