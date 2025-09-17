@@ -132,11 +132,11 @@ Competitive advantage from share of voice gaps
 
 Output Format (JSON):
 json{
-  "Strategic": {"score": <1-3>, "reasoning": "..."},
-  "Non_obvious": {"score": <1-3>, "reasoning": "..."},
-  "Specificity": {"score": <1-3>, "reasoning": "..."},
-  "Actionable": {"score": <1-3>, "reasoning": "..."},
-  "Impactful": {"score": <1-3>, "reasoning": "..."}
+  "strategic": {"score": <1-3>, "reasoning": "..."},
+  "non_obvious": {"score": <1-3>, "reasoning": "..."},
+  "specificity": {"score": <1-3>, "reasoning": "..."},
+  "actionable": {"score": <1-3>, "reasoning": "..."},
+  "impactful": {"score": <1-3>, "reasoning": "..."}
 }
 
 Examples:

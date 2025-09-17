@@ -27,9 +27,9 @@ os.makedirs(INPUT_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("adcopy-eval-api")
+logger = logging.getLogger("Aqxle-eval-api")
 
-app = FastAPI(title="Ad Copy & Keyword Eval API")
+app = FastAPI(title="Aqxle Eval API")
 
 
 # ---------- Models ----------
