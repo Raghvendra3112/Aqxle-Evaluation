@@ -116,7 +116,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
 
         # Log weighted total score
         langfuse.create_score(
-            name="weighted_total_score",
+            name="branded_weighted_total_score",
             value=score_results["weighted_total"],
             trace_id=trace_id,
             data_type="NUMERIC", 
@@ -125,7 +125,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         
         # Log average score
         langfuse.create_score(
-            name="average_score",
+            name="branded_average_score",
             value=score_results["avg_score"],
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -134,7 +134,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         
         # Log final normalized percentage score
         langfuse.create_score(
-            name="normalized_percentage",
+            name="branded_normalized_percentage",
             value=normalized_score,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -171,7 +171,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         
         # Log zero aggregate scores
         langfuse.create_score(
-            name="weighted_total_score",
+            name="branded_weighted_total_score",
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -179,7 +179,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         )
         
         langfuse.create_score(
-            name="average_score", 
+            name="branded_average_score", 
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -187,7 +187,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         )
         
         langfuse.create_score(
-            name="normalized_percentage",
+            name="branded_normalized_percentage",
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -240,7 +240,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
 
         # Log weighted total score
         langfuse.create_score(
-            name="weighted_total_score",
+            name="non_branded_weighted_total_score",
             value=score_results["weighted_total"],
             trace_id=trace_id,
             data_type="NUMERIC", 
@@ -249,7 +249,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         
         # Log average score
         langfuse.create_score(
-            name="average_score",
+            name="non_branded_average_score",
             value=score_results["avg_score"],
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -258,7 +258,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         
         # Log final normalized percentage score
         langfuse.create_score(
-            name="normalized_percentage",
+            name="non_branded_normalized_percentage",
             value=normalized_score,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -295,7 +295,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         
         # Log zero aggregate scores
         langfuse.create_score(
-            name="weighted_total_score",
+            name="non_branded_weighted_total_score",
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -303,7 +303,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         )
         
         langfuse.create_score(
-            name="average_score", 
+            name="non_branded_average_score", 
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
@@ -311,7 +311,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         )
         
         langfuse.create_score(
-            name="normalized_percentage",
+            name="non_branded_normalized_percentage",
             value=0.0,
             trace_id=trace_id,
             data_type="NUMERIC",
