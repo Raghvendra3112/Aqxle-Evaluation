@@ -30,10 +30,10 @@ def parse_scores_for_single_output(llm_output: str):
     """
     dimensions = {
         "strategic": 0.2,
-        "non_obvious": 0.1,
-        "specificity": 0.2,
+        "non_obvious": 0.15,
+        "specificity": 0.15,
         "impactful": 0.2,
-        "actionable": 0.2
+        "actionable": 0.3
     }
     
     parsed_scores = {}
