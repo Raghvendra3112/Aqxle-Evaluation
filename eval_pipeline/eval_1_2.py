@@ -7,7 +7,7 @@ from typing import Dict, Any
 import pandas as pd
 from langfuse import observe, get_client
 
-from prompts.prompts import instruction_prompt_1_2
+from prompts.prompts import instruction_prompt_newsletter_summary,instruction_prompt_newsletter_trend
 from modules.eval_functions import evaluate
 from modules.get_company_context import get_company_context
 
@@ -23,18 +23,27 @@ def load_suggestion_data(file_path: str):
 
 
 @observe(as_type="span", name="Parse Evaluation Scores")
-def parse_scores_for_single_output(llm_output: str):
+def parse_scores_for_single_output(llm_output: str, evaluation_type: str ="trend"):
     """
     Parse dimension scores and return all scores for comprehensive logging.
     Returns detailed breakdown for CSV + all individual scores for Langfuse.
     """
-    dimensions = {
-        "strategic": 0.2,
-        "non_obvious": 0.15,
-        "specificity": 0.15,
-        "impactful": 0.2,
-        "actionable": 0.3
-    }
+    if evaluation_type == "trend":
+        dimensions = {
+            "strategic": 0.2,
+            "non_obvious": 0.15,
+            "specificity": 0.15,
+            "impactful": 0.2,
+            "actionable": 0.3
+        }
+    elif evaluation_type == "summary":
+        dimensions = {
+            "clarity": 0.33,
+            "coverage": 0.34,
+            "correctness": 0.33
+        }
+    else:
+        raise ValueError(f"Unknown evaluation_type: {evaluation_type}")
     
     parsed_scores = {}
     weighted_scores = {}
@@ -99,7 +108,7 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
     try:
         datapoint = {"summary": summary, "keywords": keywords}
         llm_output = evaluate(datapoint, full_instruction_prompt)
-        score_results = parse_scores_for_single_output(llm_output)
+        score_results = parse_scores_for_single_output(llm_output,evaluation_type="summary")
         normalized_score = score_results["normalized_score"]
 
         trace_id = langfuse.get_current_trace_id()
@@ -159,10 +168,10 @@ def evaluate_branded_summary(branded_data: Dict[str, Any], full_instruction_prom
         trace_id = langfuse.get_current_trace_id()
         
         # Log zero scores for all dimensions
-        dimensions = ["strategic", "non_obvious", "specificity", "impactful", "actionable"]
+        dimensions = ["clarity", "coverage", "correctness"]
         for dim in dimensions:
             langfuse.create_score(
-                name=f"barnded_{dim}_score",
+                name=f"branded_{dim}_score",
                 value=0,
                 trace_id=trace_id,
                 data_type="NUMERIC",
@@ -223,7 +232,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
     try:
         datapoint = {"summary": summary, "keywords": keywords}
         llm_output = evaluate(datapoint, full_instruction_prompt)
-        score_results = parse_scores_for_single_output(llm_output)
+        score_results = parse_scores_for_single_output(llm_output, evaluation_type="summary")
         normalized_score = score_results["normalized_score"]
 
         trace_id = langfuse.get_current_trace_id()
@@ -283,7 +292,7 @@ def evaluate_nonbranded_summary(nonbranded_data: Dict[str, Any], full_instructio
         trace_id = langfuse.get_current_trace_id()
         
         # Log zero scores for all dimensions
-        dimensions = ["strategic", "non_obvious", "specificity", "impactful", "actionable"]
+        dimensions = ["clarity", "coverage", "correctness"]
         for dim in dimensions:
             langfuse.create_score(
                 name=f"non_branded_{dim}_score",
@@ -352,7 +361,7 @@ def evaluate_single_trend(datapoint: Dict[str, Any], full_instruction_prompt: st
         llm_output = evaluate(datapoint, full_instruction_prompt)
         
         # Parse scores (this will be traced as sub-process) 
-        score_results = parse_scores_for_single_output(llm_output)
+        score_results = parse_scores_for_single_output(llm_output, evaluation_type="trend")
         
         normalized_score = score_results["normalized_score"]
         
@@ -464,7 +473,6 @@ def evaluate_single_trend(datapoint: Dict[str, Any], full_instruction_prompt: st
 def pipeline(input_path: str, output_path: str, brand: str):
     """Main pipeline for keyword analysis evaluation (1.2)."""
     data = load_suggestion_data(input_path)
-    full_prompt = instruction_prompt_1_2 + "\n\n" + get_company_context(brand)
 
     results = []
 
@@ -479,6 +487,7 @@ def pipeline(input_path: str, output_path: str, brand: str):
     search_volume_analysis = data.get("search_volume_analysis", {})
     is_segmented = search_volume_analysis.get("is_segmented", False)
 
+    full_prompt = instruction_prompt_newsletter_summary + "\n\n" + get_company_context(brand)
     if is_segmented:
         segmented = search_volume_analysis.get("segmented_analysis", {})
         for segment_name, segment_data in segmented.items():
@@ -517,6 +526,7 @@ def pipeline(input_path: str, output_path: str, brand: str):
             results.append(evaluate_nonbranded_summary(nonbranded, full_prompt, brand,trace_id))
     # Trend Analysis
     
+    full_prompt = instruction_prompt_newsletter_trend + "\n\n" + get_company_context(brand)
     
     trends = data.get("trend_analysis", [])
     for idx, trend in enumerate(trends, 1):

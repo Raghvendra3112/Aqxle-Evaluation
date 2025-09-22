@@ -59,26 +59,14 @@ Overall score: D - Re-run insight with the goal of strengthening it based on the
 exact scoring parameters and guidelines in the example may differ, but it will provide a example of the thinking process.
 """
 
-instruction_prompt_1_2 = """
-Keyword Analysis Evaluation Prompt
+instruction_prompt_newsletter_trend = """
 You are an intelligent marketing analyst evaluating keyword targeting insights and recommendations for a Brand.
 
 Input Data Structure
 
 You will be provided with comprehensive search marketing data including:
 
-1. Search Volume Analysis
-Top Branded Keywords: including 
-  Top Branded Summary: High-level overview of brand's performance on branded keywords vs competitors
-  Detailed data showing:
-  Keyword search volumes and CPC
-  Brand positions and average positions
-  Last seen dates for competitor presence
-
-
-Top Non-Branded Keywords: Similar detailed data for category keywords including Top Non-Branded Summary: Performance overview on high-volume non-branded keywords
-
-2. Trend Analysis
+1. Trend Analysis
 Multiple market trends with:
 
 Trend Description: Current market movements and opportunities
@@ -91,8 +79,6 @@ Reasoning for keyword selection
 Position data with traffic and cost metrics
 Performance metrics including share of voice, missed clicks, and competitor analysis
 Detailed analysis of competitive gaps and opportunities
-
-This is all just for your context, in actuality you will be given one of these at a time, either top branded or top non branded or one of the trends and its corresponding data
 
 Your Evaluation Task
 You will evaluate only the keyword targeting suggestions and analysis (not the news/trends themselves) based on these criteria:
@@ -147,6 +133,73 @@ Poor Insight (Score: 1s):
 Note on Brand Context:
 Brand-specific context will be provided separately at the end of the prompt. Use this context to evaluate how well insights align with the brand's specific objectives, product lines, and competitive positioning.
 
+"""
+instruction_prompt_newsletter_summary = """
+You are an intelligent marketing analyst evaluating keyword targeting summaries and recommendations for a Brand.
+Input Data Structure
+You will be provided with comprehensive search marketing data including:
+
+Search Volume Analysis
+
+Top Branded Keywords: including
+
+Top Branded Summary: High-level overview of brand's performance on branded keywords vs competitors
+Detailed data showing:
+
+Keyword search volumes and CPC
+Brand positions and average positions
+Last seen dates for competitor presence
+
+
+
+
+Top Non-Branded Keywords: Similar detailed data for category keywords including Top Non-Branded Summary: Performance overview on high-volume non-branded keywords
+
+
+
+Your Evaluation Task
+You will evaluate only the summary based on these criteria:
+Scoring Dimensions (1-3 scale):
+
+1: Irrelevant, doesn't meet guideline
+2: Somewhat meets guideline, room for improvement
+3: Strongly meets guideline
+
+Evaluation Guidelines
+Clarity (1-3)
+
+Assesses how clearly and understandably the summary communicates information
+The summary should be easy to read and comprehend for any stakeholder
+Language should be concise, well-structured, and free of ambiguity
+Key findings should be presented in a logical flow that makes immediate sense
+Technical terms should be used appropriately without unnecessary jargon
+The overall message should be crystal clear to whoever reads it
+
+Correctness (1-3)
+
+Evaluates factual accuracy of all statements in the summary relative to the provided data
+All numerical values, percentages, rankings, and metrics must match the source data exactly or should be directly inferrable from the data
+Competitor comparisons and positioning claims must be verifiable against the data
+No information should be stated that cannot be directly supported/inferred by the provided dataset
+Calculations and derived insights must be mathematically sound based on the raw data
+
+Coverage (1-3)
+
+Measures whether the summary captures all significant findings from the data
+Should not omit critical performance indicators, major competitive threats, or key opportunities
+Must address both strong and weak performance areas revealed in the data
+Should cover the most impactful keywords, competitors, and market dynamics present in the dataset
+Ensures no major gaps exist between what the data shows and what the summary reports
+Balances comprehensiveness with conciseness - hitting all important points without being exhaustive
+
+Output Format (JSON):
+json{
+  "clarity": {"score": <1-3>, "reasoning": "..."},
+  "correctness": {"score": <1-3>, "reasoning": "..."},
+  "coverage": {"score": <1-3>, "reasoning": "..."}
+}
+Note on Brand Context:
+Brand-specific context will be provided separately at the end of the prompt. Use this context to evaluate how well summaries align with the brand's specific objectives, product lines, and competitive positioning.RetryClaude does not have the ability to run the code it generates yet.
 """
 instruction_prompt_1_3 = """
 Role and Context
